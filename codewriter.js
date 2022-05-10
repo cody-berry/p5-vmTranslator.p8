@@ -112,5 +112,44 @@ class CodeWriter {
         }
         return result
     }
+
+    // writes the initialization, setting SP to 256
+    writeInit() {
+        return [
+                "// initialization code",
+                "@256",
+                "D=A",
+                "@SP",
+                "M=D"]
+    }
+
+    // writes label
+    writeLabel(label) {
+        return ["(" + label + ")"]
+    }
+
+    // writes goto
+    writeGoto(label) {
+        return ["@" + label,
+                "0;JMP"]
+    }
+
+    // writes if-goto
+    writeIf(label) {
+        return ["@SP",
+                "AM=M-1",
+                "D=M",
+                "@" + label,
+                "0;JNE"]
+    }
+
+    // writes function
+    writeFunction(functionName, numVars) {
+        let result = ["("+ functionName + ")"]
+        for (let i = 0; i < numVars; i++) {
+            result.push("@SP", "M=M+1", "A=M-1", "M=0")
+        }
+        return result
+    }
 }
 

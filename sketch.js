@@ -30,7 +30,7 @@ let codewriter
 
 function preload() {
     font = loadFont('data/consola.ttf')
-    file = loadStrings('MemoryAccess/StaticTest/StaticTest.vm')
+    file = loadStrings('ProgramFlow/BasicLoop/BasicLoop.vm')
 }
 
 
@@ -53,6 +53,10 @@ function setup() {
     // a code writer.
     codewriter = new CodeWriter()
 
+    let init = codewriter.writeInit()
+    for (let code of init) {
+        console.log(code)
+    }
 
     while (parser.hasMoreCommands()) {
         // console.log(parser.lineNumber)
@@ -63,8 +67,10 @@ function setup() {
 
         if (parser.commandType() === C_ARITHMETIC) {
             let arithmetic = codewriter.writeArithmetic(parser.arg1())
-            for (let code of arithmetic) {
-                console.log(code)
+            if (arithmetic) {
+                for (let code of arithmetic) {
+                    console.log(code)
+                }
             }
         }
         if (parser.commandType() === C_PUSH) {
@@ -83,6 +89,31 @@ function setup() {
                 }
             }
         }
+        if (parser.commandType() === C_LABEL) {
+            let label = codewriter.writeLabel(parser.arg1())
+            if (label) {
+                for (let code of label) {
+                    console.log(code)
+                }
+            }
+        }
+        if (parser.commandType() === C_GOTO) {
+            let goto = codewriter.writeGoto(parser.arg1())
+            if (goto) {
+                for (let code of goto) {
+                    console.log(code)
+                }
+            }
+        }
+        if (parser.commandType() === C_IF) {
+            let ifGoto = codewriter.writeIf(parser.arg1())
+            if (ifGoto) {
+                for (let code of ifGoto) {
+                    console.log(code)
+                }
+            }
+        }
+
     }
 
     noLoop()
