@@ -30,7 +30,7 @@ let codewriter
 
 function preload() {
     font = loadFont('data/consola.ttf')
-    file = loadStrings('ProgramFlow/BasicLoop/BasicLoop.vm')
+    file = loadStrings('ProgramFlow/FibonacciSeries/FibonacciSeries.vm')
 }
 
 

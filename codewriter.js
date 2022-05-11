@@ -140,7 +140,7 @@ class CodeWriter {
                 "AM=M-1",
                 "D=M",
                 "@" + label,
-                "0;JNE"]
+                "D;JNE"]
     }
 
     // writes function
