@@ -2,10 +2,13 @@
 // writes the code for certain instructions
 class CodeWriter {
     // all we need to do is to write commands!
-    constructor() {
-        // we're going to use labels, but hey are the same name, so we need
+    constructor(filename) {
+        // we're going to use labels, but they are the same name, so we need
         // a counter.
         this.labelNumber = 0
+
+        // this will be our static segment beginning.
+        this.filename = filename
     }
 
 
@@ -83,7 +86,8 @@ class CodeWriter {
             } if (segment === 'temp') { // push temp i
                 result = ["@" + (5+index), "D=M"] // D=RAM[5+i]
             } if (segment === 'static') { // push static i
-                result = ["@" + index + "A", "D=M"] // D={variable at static i}
+                result = ["@" + index + this.filename, "D=M"] // D={variable at
+                // static i}
             }
             result.push("@SP")
             result.push("M=M+1")
@@ -105,7 +109,7 @@ class CodeWriter {
             } if (segment === 'temp') { // pop temp i
                 result.push("@SP", "AM=M-1", "D=M", "@" + (5+index), "M=D") // RAM[5+i]=D
             } if (segment === 'static') { // pop static i
-                result.push("@SP", "AM=M-1", "D=M", "@" + index + "A", "M=D") // {variable at
+                result.push("@SP", "AM=M-1", "D=M", "@" + index + this.filename, "M=D") // {variable at
                 // static
                 // i} = D
             }
@@ -150,6 +154,49 @@ class CodeWriter {
             result.push("@SP", "M=M+1", "A=M-1", "M=0")
         }
         return result
+    }
+
+    // writes return
+    writeReturn() {
+        return ["@LCL",
+                "D=M",
+                "@endFrame",
+                "M=D",
+                "@SP",
+                "AM=M-1",
+                "D=M",
+                "@ARG",
+                "A=M",
+                "M=D",
+                "@ARG",
+                "D=M+1",
+                "@SP",
+                "M=D",
+                "@endFrame",
+                "AM=M-1",
+                "D=M",
+                "@THAT",
+                "M=D",
+                "@endFrame",
+                "AM=M-1",
+                "D=M",
+                "@THIS",
+                "M=D",
+                "@endFrame",
+                "AM=M-1",
+                "D=M",
+                "@ARG",
+                "M=D",
+                "@endFrame",
+                "AM=M-1",
+                "D=M",
+                "@LCL",
+                "M=D",
+                "@endFrame",
+                "AM=M-1",
+                "A=M",
+                "0;JMP"
+            ]
     }
 }
 
