@@ -23,14 +23,17 @@ function displayDebugCorner() {
 
 let font
 let instructions
-let file
+let files
 let parser
 let codewriter
 
 
 function preload() {
     font = loadFont('data/consola.ttf')
-    file = loadStrings('ProgramFlow/FibonacciSeries/FibonacciSeries.vm')
+    files = [
+        loadStrings('FunctionCalls/FibonacciElement/Main.vm'),
+        loadStrings('FunctionCalls/FibonacciElement/Sys.vm')
+        ]
 }
 
 
@@ -48,6 +51,7 @@ function setup() {
 
 
     // a parser. we'll need it later.
+    for file in files {
     parser = new Parser(file)
 
     // a code writer.
@@ -113,7 +117,24 @@ function setup() {
                 }
             }
         }
-
+        if (parser.commandType() === C_FUNCTION) {
+            let FUNCTION = // in all caps because 'function' is a keyword
+                codewriter.writeFunction(parser.arg1(), parser.arg2())
+            if (FUNCTION) {
+                for (let code of FUNCTION) {
+                    console.log(code)
+                }
+            }
+        }
+        if (parser.commandType() === C_RETURN) {
+            let RETURN = // return is a keyword as well
+                codewriter.writeReturn()
+            if (RETURN) {
+                for (let code of RETURN) {
+                    console.log(code)
+                }
+            }
+        }
     }
 
     noLoop()

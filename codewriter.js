@@ -198,5 +198,10 @@ class CodeWriter {
                 "0;JMP"
             ]
     }
+
+    // changes the filename
+    changeFile(filename) {
+        this.filename = filename
+    }
 }
 
