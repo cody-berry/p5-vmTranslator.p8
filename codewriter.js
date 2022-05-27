@@ -3,12 +3,17 @@
 class CodeWriter {
     // all we need to do is to write commands!
     constructor(filename) {
-        // we're going to use labels, but they are the same name, so we need
+        // we're going to use labels for lt, eq, and gt, but they are the same
+        // name, so we need
         // a counter.
         this.labelNumber = 0
 
         // this will be our static segment beginning.
         this.filename = filename
+
+        // there are multiple return addresses, so we'll have to keep count
+        // of what number return address this is.
+        this.returnAddressLabelNumber = 0
     }
 
 
@@ -149,6 +154,9 @@ class CodeWriter {
 
     // writes function
     writeFunction(functionName, numVars) {
+        // this could be written as:
+        // label {functionName}
+        // push 0 {numVars} times
         let result = ["("+ functionName + ")"]
         for (let i = 0; i < numVars; i++) {
             result.push("@SP", "M=M+1", "A=M-1", "M=0")
@@ -161,47 +169,95 @@ class CodeWriter {
         return ["@LCL",
                 "D=M",
                 "@endFrame",
-                "M=D",
+                "M=D",         // endFrame = LCL
                 "@SP",
                 "AM=M-1",
                 "D=M",
                 "@ARG",
                 "A=M",
-                "M=D",
+                "M=D",         // pop arg 0
                 "@ARG",
                 "D=M+1",
                 "@SP",
-                "M=D",
+                "M=D",         // SP = ARG + 1
                 "@endFrame",
                 "AM=M-1",
                 "D=M",
                 "@THAT",
-                "M=D",
+                "M=D",         // endFrame--, THAT=*endFrame
                 "@endFrame",
                 "AM=M-1",
                 "D=M",
                 "@THIS",
-                "M=D",
+                "M=D",         // endFrame--, THIS=*endFrame
                 "@endFrame",
                 "AM=M-1",
                 "D=M",
                 "@ARG",
-                "M=D",
+                "M=D",         // endFrame--, ARG=*endFrame
                 "@endFrame",
                 "AM=M-1",
                 "D=M",
                 "@LCL",
-                "M=D",
+                "M=D",         // endFrame--, LCL=*endFrame
                 "@endFrame",
                 "AM=M-1",
-                "A=M",
-                "0;JMP"
+                "0;JMP"        // endFrame--, goto *endFrame
             ]
     }
 
     // changes the filename
     changeFile(filename) {
         this.filename = filename
+    }
+
+    // writes call
+    writeCall(functionName, numArgs) {
+        this.returnAddressLabelNumber++
+
+        return [
+            "// call",
+            "@returnAddress" + this.returnAddressLabelNumber,
+            "D=A",
+            "@SP",
+            "AM=M+1",
+            "M=D",
+            "@LCL",
+            "D=M",
+            "@SP",
+            "AM=M+1",
+            "M=D",
+            "@ARG",
+            "D=M",
+            "@SP",
+            "AM=M+1",
+            "M=D",
+            "@THIS",
+            "D=M",
+            "@SP",
+            "AM=M+1",
+            "M=D",
+            "@THAT",
+            "D=M",
+            "@SP",
+            "AM=M+1",
+            "M=D",
+            "@SP",
+            "MD=M+1",
+            "@5",
+            "D=D-A",
+            "@" + numArgs,
+            "D=D-A",
+            "@ARG",
+            "M=D",
+            "@SP",
+            "D=M",
+            "@LCL",
+            "M=D",
+            "@" + functionName,
+            "0;JMP",
+            "(returnAddress" + this.returnAddressLabelNumber + ")"
+        ]
     }
 }
 

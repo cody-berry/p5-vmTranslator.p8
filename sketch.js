@@ -25,17 +25,29 @@ let font
 let instructions
 let files
 let parser
-let codewriter
+let codeWriter
+
+let fileStrings
 
 
 function preload() {
     font = loadFont('data/consola.ttf')
     files = [
-        loadStrings('FunctionCalls/FibonacciElement/Main.vm'),
-        loadStrings('FunctionCalls/FibonacciElement/Sys.vm')
+        './FunctionCalls/NestedCall/Sys.vm'
         ]
+    fileStrings = []
+
+    for (let file of files) {
+        loadStrings(file, loadFileIn)
+    }
 }
 
+// callback to loading a file in the list of files
+function loadFileIn(fileString) {
+    for (let line of fileString) {
+        fileStrings.push(line)
+    }
+}
 
 function setup() {
     let cnv = createCanvas(600, 300)
@@ -49,28 +61,24 @@ function setup() {
         [1,2,3,4,5] → no function
         z → freeze sketch</pre>`)
 
+    // a code writer.
+    codeWriter = new CodeWriter()
+
 
     // a parser. we'll need it later.
-    for file in files {
-    parser = new Parser(file)
 
-    // a code writer.
-    codewriter = new CodeWriter()
-
-    let init = codewriter.writeInit()
-    for (let code of init) {
-        console.log(code)
-    }
-
+    parser = new Parser(fileStrings)
+    // let init = codeWriter.writeInit()
+    // for (let code of init) {
+    //     console.log(code)
+    // }
     while (parser.hasMoreCommands()) {
         // console.log(parser.lineNumber)
         parser.advance()
         // console.log(words)
-        console.log("// " + parser.currentLine)
-
-
+        // console.log("// " + parser.currentLine)
         if (parser.commandType() === C_ARITHMETIC) {
-            let arithmetic = codewriter.writeArithmetic(parser.arg1())
+            let arithmetic = codeWriter.writeArithmetic(parser.arg1())
             if (arithmetic) {
                 for (let code of arithmetic) {
                     console.log(code)
@@ -78,7 +86,7 @@ function setup() {
             }
         }
         if (parser.commandType() === C_PUSH) {
-            let push = codewriter.writePushPop('push', parser.arg1(), parser.arg2())
+            let push = codeWriter.writePushPop('push', parser.arg1(), parser.arg2())
             if (push) {
                 for (let code of push) {
                     console.log(code)
@@ -86,7 +94,7 @@ function setup() {
             }
         }
         if (parser.commandType() === C_POP) {
-            let pop = codewriter.writePushPop('pop', parser.arg1(), parser.arg2())
+            let pop = codeWriter.writePushPop('pop', parser.arg1(), parser.arg2())
             if (pop) {
                 for (let code of pop) {
                     console.log(code)
@@ -94,7 +102,7 @@ function setup() {
             }
         }
         if (parser.commandType() === C_LABEL) {
-            let label = codewriter.writeLabel(parser.arg1())
+            let label = codeWriter.writeLabel(parser.arg1())
             if (label) {
                 for (let code of label) {
                     console.log(code)
@@ -102,7 +110,7 @@ function setup() {
             }
         }
         if (parser.commandType() === C_GOTO) {
-            let goto = codewriter.writeGoto(parser.arg1())
+            let goto = codeWriter.writeGoto(parser.arg1())
             if (goto) {
                 for (let code of goto) {
                     console.log(code)
@@ -110,7 +118,7 @@ function setup() {
             }
         }
         if (parser.commandType() === C_IF) {
-            let ifGoto = codewriter.writeIf(parser.arg1())
+            let ifGoto = codeWriter.writeIf(parser.arg1())
             if (ifGoto) {
                 for (let code of ifGoto) {
                     console.log(code)
@@ -119,7 +127,7 @@ function setup() {
         }
         if (parser.commandType() === C_FUNCTION) {
             let FUNCTION = // in all caps because 'function' is a keyword
-                codewriter.writeFunction(parser.arg1(), parser.arg2())
+                codeWriter.writeFunction(parser.arg1(), parser.arg2())
             if (FUNCTION) {
                 for (let code of FUNCTION) {
                     console.log(code)
@@ -128,9 +136,17 @@ function setup() {
         }
         if (parser.commandType() === C_RETURN) {
             let RETURN = // return is a keyword as well
-                codewriter.writeReturn()
+                codeWriter.writeReturn()
             if (RETURN) {
                 for (let code of RETURN) {
+                    console.log(code)
+                }
+            }
+        }
+        if (parser.commandType() === C_CALL) {
+            let call = codeWriter.writeCall(parser.arg1(), parser.arg2())
+            if (call) {
+                for (let code of call) {
                     console.log(code)
                 }
             }
