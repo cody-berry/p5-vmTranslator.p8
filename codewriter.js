@@ -202,6 +202,7 @@ class CodeWriter {
                 "M=D",         // endFrame--, LCL=*endFrame
                 "@endFrame",
                 "AM=M-1",
+                "A=M",
                 "0;JMP"        // endFrame--, goto *endFrame
             ]
     }
@@ -217,10 +218,14 @@ class CodeWriter {
 
         return [
             "// call",
+            "@" + max(numArgs, 1),
+            "D=A",
+            "@SP",
+            "M=D+M",
             "@returnAddress" + this.returnAddressLabelNumber,
             "D=A",
             "@SP",
-            "AM=M+1",
+            "A=M",
             "M=D",
             "@LCL",
             "D=M",
@@ -246,7 +251,7 @@ class CodeWriter {
             "MD=M+1",
             "@5",
             "D=D-A",
-            "@" + numArgs,
+            "@" + constrain(max(numArgs-1, 1), 0, Infinity),
             "D=D-A",
             "@ARG",
             "M=D",

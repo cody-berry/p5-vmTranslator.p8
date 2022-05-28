@@ -22,10 +22,14 @@ M=D
  @4
  M=D
  // call
+ @1
+ D=A
+ @SP
+ M=D+M
  @returnAddress1
  D=A
  @SP
- AM=M+1
+ A=M
  M=D
  @LCL
  D=M
@@ -51,7 +55,7 @@ M=D
  MD=M+1
  @5
  D=D-A
- @0
+ @-1
  D=D-A
  @ARG
  M=D
@@ -174,10 +178,14 @@ M=M+1
 A=M-1
 M=D
  // call
+ @1
+ D=A
+ @SP
+ M=D+M
  @returnAddress2
  D=A
  @SP
- AM=M+1
+ A=M
  M=D
  @LCL
  D=M
@@ -203,7 +211,7 @@ M=D
  MD=M+1
  @5
  D=D-A
- @1
+ @0
  D=D-A
  @ARG
  M=D
@@ -324,6 +332,7 @@ M=D
  M=D
  @endFrame
  AM=M-1
+ A=M
  0;JMP
  (Sys.add12)
 @4002
@@ -405,4 +414,5 @@ M=D
  M=D
  @endFrame
  AM=M-1
+ A=M
  0;JMP
