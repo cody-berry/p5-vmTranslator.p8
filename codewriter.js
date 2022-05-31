@@ -218,7 +218,7 @@ class CodeWriter {
 
         return [
             "// call",
-            "@" + max(numArgs, 1),
+            "@" + max(1-numArgs, 0),
             "D=A",
             "@SP",
             "M=D+M",
@@ -251,7 +251,7 @@ class CodeWriter {
             "MD=M+1",
             "@5",
             "D=D-A",
-            "@" + constrain(max(numArgs-1, 1), 0, Infinity),
+            "@" + max(numArgs, 1),
             "D=D-A",
             "@ARG",
             "M=D",

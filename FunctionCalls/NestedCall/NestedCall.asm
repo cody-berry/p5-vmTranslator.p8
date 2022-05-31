@@ -55,7 +55,7 @@ M=D
  MD=M+1
  @5
  D=D-A
- @-1
+ @1
  D=D-A
  @ARG
  M=D
@@ -178,7 +178,7 @@ M=M+1
 A=M-1
 M=D
  // call
- @1
+ @0
  D=A
  @SP
  M=D+M
@@ -211,7 +211,7 @@ M=D
  MD=M+1
  @5
  D=D-A
- @0
+ @1
  D=D-A
  @ARG
  M=D
