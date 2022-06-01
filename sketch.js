@@ -27,26 +27,21 @@ let files
 let parser
 let codeWriter
 
-let fileStrings
+let fileLines
 
 
 function preload() {
     font = loadFont('data/consola.ttf')
     files = [
-        './FunctionCalls/NestedCall/Sys.vm'
+        './FunctionCalls/FibonacciElement/Sys.vm',
+        './FunctionCalls/FibonacciElement/Main.vm'
         ]
-    fileStrings = []
+    fileLines = []
 
     for (let file of files) {
-        loadStrings(file, loadFileIn)
+        fileLines.push([file.substring(file.lastIndexOf('/')+1), loadStrings(file)])
     }
-}
-
-// callback to loading a file in the list of files
-function loadFileIn(fileString) {
-    for (let line of fileString) {
-        fileStrings.push(line)
-    }
+    console.log(fileLines)
 }
 
 function setup() {
@@ -62,92 +57,96 @@ function setup() {
         z → freeze sketch</pre>`)
 
     // a code writer.
-    codeWriter = new CodeWriter()
+    codeWriter = new CodeWriter('')
+    let init = codeWriter.writeInit()
+    for (let code of init) {
+        console.log(code)
+    }
+
+    for (let file of fileLines) {
+        let fileStrings = file[1]
+        // a parser. we'll need it later.
+        parser = new Parser(fileStrings)
 
 
-    // a parser. we'll need it later.
-
-    parser = new Parser(fileStrings)
-    // let init = codeWriter.writeInit()
-    // for (let code of init) {
-    //     console.log(code)
-    // }
-    while (parser.hasMoreCommands()) {
-        // console.log(parser.lineNumber)
-        parser.advance()
-        // console.log(words)
-        // console.log("// " + parser.currentLine)
-        if (parser.commandType() === C_ARITHMETIC) {
-            let arithmetic = codeWriter.writeArithmetic(parser.arg1())
-            if (arithmetic) {
-                for (let code of arithmetic) {
-                    console.log(code)
+        codeWriter.changeFile(file[0])
+        while (parser.hasMoreCommands()) {
+            // console.log(parser.lineNumber)
+            parser.advance()
+            // console.log(words)
+            // console.log("// " + parser.currentLine)
+            if (parser.commandType() === C_ARITHMETIC) {
+                let arithmetic = codeWriter.writeArithmetic(parser.arg1())
+                if (arithmetic) {
+                    for (let code of arithmetic) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_PUSH) {
-            let push = codeWriter.writePushPop('push', parser.arg1(), parser.arg2())
-            if (push) {
-                for (let code of push) {
-                    console.log(code)
+            if (parser.commandType() === C_PUSH) {
+                let push = codeWriter.writePushPop('push', parser.arg1(), parser.arg2())
+                if (push) {
+                    for (let code of push) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_POP) {
-            let pop = codeWriter.writePushPop('pop', parser.arg1(), parser.arg2())
-            if (pop) {
-                for (let code of pop) {
-                    console.log(code)
+            if (parser.commandType() === C_POP) {
+                let pop = codeWriter.writePushPop('pop', parser.arg1(), parser.arg2())
+                if (pop) {
+                    for (let code of pop) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_LABEL) {
-            let label = codeWriter.writeLabel(parser.arg1())
-            if (label) {
-                for (let code of label) {
-                    console.log(code)
+            if (parser.commandType() === C_LABEL) {
+                let label = codeWriter.writeLabel(parser.arg1())
+                if (label) {
+                    for (let code of label) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_GOTO) {
-            let goto = codeWriter.writeGoto(parser.arg1())
-            if (goto) {
-                for (let code of goto) {
-                    console.log(code)
+            if (parser.commandType() === C_GOTO) {
+                let goto = codeWriter.writeGoto(parser.arg1())
+                if (goto) {
+                    for (let code of goto) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_IF) {
-            let ifGoto = codeWriter.writeIf(parser.arg1())
-            if (ifGoto) {
-                for (let code of ifGoto) {
-                    console.log(code)
+            if (parser.commandType() === C_IF) {
+                let ifGoto = codeWriter.writeIf(parser.arg1())
+                if (ifGoto) {
+                    for (let code of ifGoto) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_FUNCTION) {
-            let FUNCTION = // in all caps because 'function' is a keyword
-                codeWriter.writeFunction(parser.arg1(), parser.arg2())
-            if (FUNCTION) {
-                for (let code of FUNCTION) {
-                    console.log(code)
+            if (parser.commandType() === C_FUNCTION) {
+                let FUNCTION = // in all caps because 'function' is a keyword
+                    codeWriter.writeFunction(parser.arg1(), parser.arg2())
+                if (FUNCTION) {
+                    for (let code of FUNCTION) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_RETURN) {
-            let RETURN = // return is a keyword as well
-                codeWriter.writeReturn()
-            if (RETURN) {
-                for (let code of RETURN) {
-                    console.log(code)
+            if (parser.commandType() === C_RETURN) {
+                let RETURN = // return is a keyword as well
+                    codeWriter.writeReturn()
+                if (RETURN) {
+                    for (let code of RETURN) {
+                        console.log(code)
+                    }
                 }
             }
-        }
-        if (parser.commandType() === C_CALL) {
-            let call = codeWriter.writeCall(parser.arg1(), parser.arg2())
-            if (call) {
-                for (let code of call) {
-                    console.log(code)
+            if (parser.commandType() === C_CALL) {
+                let call = codeWriter.writeCall(parser.arg1(), parser.arg2())
+                if (call) {
+                    for (let code of call) {
+                        console.log(code)
+                    }
                 }
             }
         }

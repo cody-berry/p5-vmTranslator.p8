@@ -157,7 +157,7 @@ class CodeWriter {
         // this could be written as:
         // label {functionName}
         // push 0 {numVars} times
-        let result = ["("+ functionName + ")"]
+        let result = ["("+ functionName + ")", "@5", "D=A", "@SP", "M=M+D"]
         for (let i = 0; i < numVars; i++) {
             result.push("@SP", "M=M+1", "A=M-1", "M=0")
         }
