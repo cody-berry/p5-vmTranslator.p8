@@ -1,10 +1,13 @@
-(2) [Array(2), Array(2)]
-// initialization code
+// initialization code  
 @256
 D=A
 @SP
 M=D
  (Sys.init)
+ @5
+ D=A
+ @SP
+ M=M+D
 @4
 D=A
 @SP
@@ -60,6 +63,10 @@ M=D
  @WHILE
  0;JMP
  (Main.fibonacci)
+ @5
+ D=A
+ @SP
+ M=M+D
 @0
 D=A
 @ARG
