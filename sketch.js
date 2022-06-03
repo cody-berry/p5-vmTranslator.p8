@@ -33,8 +33,9 @@ let fileLines
 function preload() {
     font = loadFont('data/consola.ttf')
     files = [
-        './FunctionCalls/FibonacciElement/Sys.vm',
-        './FunctionCalls/FibonacciElement/Main.vm'
+        './FunctionCalls/StaticsTest/Sys.vm',
+        './FunctionCalls/StaticsTest/Class1.vm',
+        './FunctionCalls/StaticsTest/Class2.vm'
         ]
     fileLines = []
 
